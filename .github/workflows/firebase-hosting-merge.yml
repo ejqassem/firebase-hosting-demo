@@ -7,39 +7,11 @@ name: Deploy to Firebase Hosting on merge
     branches:
       - main
 jobs:
-  build:
-    name: Build
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Yarn Installation
-        run: |
-          mkdir ~/.npm-global
-          npm config set prefix '~/.npm-global'
-          export PATH=~/.npm-global/bin:$PATH
-          source ~/.profile
-          npm install -g yarn
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Install Dependencies
-        run: yarn install
-      - name: Build
-        run: yarn build
-      - name: Archive Production Artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: build
-          path: build
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Download Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: build
+      - uses: actions/checkout@v2
+      - run: npm ci and npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
